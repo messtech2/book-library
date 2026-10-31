@@ -14,6 +14,6 @@ app.get('/api/health', (_req, res) => {
 const PORT = Number(process.env.PORT) || 4000;
 
 app.listen(PORT, () => {
-  console.log(`Rerunning... ${PORT}`);
+  console.log(`The app is running on port ${PORT}`);
 });
 
