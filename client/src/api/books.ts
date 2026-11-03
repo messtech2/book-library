@@ -1,30 +1,29 @@
 import type {Book} from '../types/book';
 
 export const getBooks = async () => {
-    try {
+   
         
-        //Around 6 sample books as the data
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-      
         //It waits about half a second before resolving
-        
-        const sampleBooks: Book[] = [
-            { id: '1', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', isbn: '9780743273565', genre: 'Fiction', publishedYear: 1925, available: true },
-            { id: '2', title: 'To Kill a Mockingbird', author: 'Harper Lee', isbn: '9780061120084', genre: 'Fiction', publishedYear: 1960, available: true },
-            { id: '3', title: '1984', author: 'George Orwell', isbn: '9780451524935', genre: 'Dystopian', publishedYear: 1949, available: false },
-            { id: '4', title: 'Pride and Prejudice', author: 'Jane Austen', isbn: '9780141439518', genre: 'Romance', publishedYear: 1813, available: true },
-            { id: '5', title: 'The Catcher in the Rye', author: 'J.D. Salinger', isbn: '9780316769488', genre: 'Fiction', publishedYear: 1951, available: false },
-            { id: '6', title: 'The Hobbit', author: 'J.R.R. Tolkien', isbn: '9780547928227', genre: 'Fantasy', publishedYear: 1937, available: true },
-        ];
-        //It returns a Promise of Book[]
+        //No declared return type. Add Promise<Book[]> to the signature.
 
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        
+        
+        // For now, we'll just return the sample books.
+
+        
         return sampleBooks;
-        // const data: Book[] = await response.json();
-        // return data;
-    } catch (error) {
-        console.error('Error fetching books:', error);
-        throw error;
-    }
-};
-      
+        
+        
+    };
+    
+    //Around 6 sample books as the data
+    const sampleBooks: Book[] = [
+        { id: '1', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', isbn: '9780743273565', genre: 'Fiction', publishedYear: 1925, available: true },
+        { id: '2', title: 'To Kill a Mockingbird', author: 'Harper Lee', isbn: '9780061120084', genre: 'Fiction', publishedYear: 1960, available: true },
+        { id: '3', title: '1984', author: 'George Orwell', isbn: '9780451524935', genre: 'Dystopian', publishedYear: 1949, available: false },
+        { id: '4', title: 'Pride and Prejudice', author: 'Jane Austen', isbn: '9780141439518', genre: 'Romance', publishedYear: 1813, available: true },
+        { id: '5', title: 'The Catcher in the Rye', author: 'J.D. Salinger', isbn: '9780316769488', genre: 'Fiction', publishedYear: 1951, available: false },
+        { id: '6', title: 'The Hobbit', author: 'J.R.R. Tolkien', isbn: '9780547928227', genre: 'Fantasy', publishedYear: 1937, available: true },
+    ];
