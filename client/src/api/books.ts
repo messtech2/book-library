@@ -1,4 +1,3 @@
-//Use import type for the type import (check what the lint rules say if you use a plain import)
 import type {Book} from '../types/book';
 
 export const getBooks = async () => {
