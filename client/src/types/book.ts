@@ -1,0 +1,12 @@
+
+type Book= {
+    id: string;
+    title: string;
+    author: string;
+    isbn: string;
+    genre: string;
+    publishedYear: number;
+    available: boolean;
+}
+
+export default Book;
