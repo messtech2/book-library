@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+
+.book-card{
+    padding: 1rem;
+    margin: 1rem;
+    box-sizing: border-box;
+  }
+.book-card-content{
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  padding: 1em;
+  }
+
+.book-title{
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+.book-details{
+    font-size: 1rem;
+    line-height: 1.5;
+}
+.book-details p {
+    margin: 0;
+    padding: 0;
+}
+
+.book-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    
+}
