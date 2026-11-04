@@ -11,7 +11,7 @@ export default function BookCard(book: Book) {
       <p>{book.author}</p>
       <p>{book.genre}</p>
       <p>{book.publishedYear}</p>
-      <p>{book.available ? 'Available' : ' Checked out'}</p>
+      <p>{book.available ? 'Available' : 'Checked out'}</p>
     </div>
 
         
