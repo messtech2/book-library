@@ -8,7 +8,7 @@ export default function BookCard({ book }: BookCardProps) {
   const { title, author, genre, publishedYear, available } = book
 
   return (
-    <section className="book-card">
+    <article className="book-card">
       <div className="book-card-content">
         <h2 className="book-title">{title}</h2>
         <div className="book-details">
@@ -18,6 +18,6 @@ export default function BookCard({ book }: BookCardProps) {
           <p>{available ? 'Available' : 'Checked out'}</p>
         </div>
       </div>
-    </section>
+    </article>
   )
 }
