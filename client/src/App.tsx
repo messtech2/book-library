@@ -1,32 +1,58 @@
-
+import { useState } from 'react'
 import './App.css'
 import BookCard from './components/BookCard'
+import SearchBar from './components/SearchBar'
+import { useBooks } from './hooks/useBooks'
 
 function App() {
+  const { books, loading, error, reload } = useBooks()
+  const [query, setQuery] = useState('')
+  const [onlyAvailable, setOnlyAvailable] = useState(false)
+
+  const normalizedQuery = query.trim().toLowerCase()
+  const visibleBooks = books.filter((book) => {
+    const matchesQuery =
+      book.title.toLowerCase().includes(normalizedQuery) ||
+      book.author.toLowerCase().includes(normalizedQuery)
+    const matchesAvailability = !onlyAvailable || book.available
+    return matchesQuery && matchesAvailability
+  })
+
+  const isEmpty = !loading && !error && books.length === 0
+  const noMatches = books.length > 0 && visibleBooks.length === 0
 
   return (
-    <>
-      <section className="app">
-        <h1>Book Library</h1>
-        <div className="book-list">
+    <section className="app">
+      <h1>Book Library</h1>
 
-            {[{ id: '1', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', isbn: '9780743273565', genre: 'Fiction', publishedYear: 1925, available: true },
-             { id: '2', title: 'To Kill a Mockingbird', author: 'Harper Lee', isbn: '9780061120084', genre: 'Fiction', publishedYear: 1960, available: true },
-              { id: '3', title: '1984', author: 'George Orwell', isbn: '9780451524935', genre: 'Dystopian', publishedYear: 1949, available: false },
-               { id: '4', title: 'Pride and Prejudice', author: 'Jane Austen', isbn: '9780141439518', genre: 'Romance', publishedYear: 1813, available: true }, 
-               { id: '5', title: 'The Catcher in the Rye', author: 'J.D. Salinger', isbn: '9780316769488', genre: 'Fiction', publishedYear: 1951, available: false }, 
-               { id: '6', title: 'The Hobbit', author: 'J.R.R. Tolkien', isbn: '9780547928227', genre: 'Fantasy', publishedYear: 1937, available: true
-            }].map((book) => <BookCard key={book.id} book={book} />)}
-           
+      <SearchBar
+        query={query}
+        onQueryChange={setQuery}
+        onlyAvailable={onlyAvailable}
+        onOnlyAvailableChange={setOnlyAvailable}
+      />
+
+      {loading && <p>Loading...</p>}
+
+      {error && (
+        <div>
+          <p>{error.message}</p>
+          <button onClick={reload}>Retry</button>
         </div>
-       
-        
-      </section>
+      )}
 
-     
-     
-      
-    </>
+      {isEmpty && <p>No books yet.</p>}
+
+      {noMatches && <p>No books match "{query}"</p>}
+
+      {visibleBooks.length > 0 && (
+        <div className="book-list">
+          {visibleBooks.map((book) => (
+            <BookCard key={book.id} book={book} />
+          ))}
+        </div>
+      )}
+    </section>
   )
 }
 
