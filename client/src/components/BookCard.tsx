@@ -1,4 +1,6 @@
+import { Link,  } from 'react-router'
 import type { Book } from '../types/book'
+
 
 type BookCardProps = {
   book: Book
@@ -10,7 +12,7 @@ export default function BookCard({ book }: BookCardProps) {
   return (
     <article className="book-card">
       <div className="book-card-content">
-        <h2 className="book-title">{title}</h2>
+        <h2 className="book-title"><Link to={`/books/${book.id}`} >{title}</Link></h2>
         <div className="book-details">
           <p>{author}</p>
           <p>{genre}</p>
