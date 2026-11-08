@@ -1,3 +1,6 @@
+
+
+
 type SearchBarProps = {
   query: string
   onQueryChange: (value: string) => void
@@ -11,6 +14,7 @@ export default function SearchBar({
   onlyAvailable,
   onOnlyAvailableChange,
 }: SearchBarProps) {
+
   return (
     <div>
       <label htmlFor="book-search">Search</label>
@@ -26,7 +30,11 @@ export default function SearchBar({
         id="only-available"
         type="checkbox"
         checked={onlyAvailable}
-        onChange={(e) => onOnlyAvailableChange(e.target.checked)}
+        onChange={(e) => {
+          onOnlyAvailableChange(e.target.checked)
+        }}
+
+
       />
     </div>
   )

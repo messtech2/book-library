@@ -2,16 +2,16 @@ import { useSearchParams } from 'react-router'
 import SearchBar from '../components/SearchBar'
 import BookCard from '../components/BookCard'
 import { useBooks } from '../hooks/useBooks'
-import { useState } from 'react'
 
 export default function BookListPage() {
 
-     const { books, loading, error, reload } = useBooks()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [onlyAvailable, setOnlyAvailable] = useState(false)
-  const query = searchParams.get('q') ?? ''
-
+    const { books, loading, error, reload } = useBooks()
+    const [searchParams, setSearchParams] = useSearchParams()
+    const query = searchParams.get('q') ?? ''
+    
+    const onlyAvailable = searchParams.get('onlyAvailable') === 'true'
   const normalizedQuery = query.trim().toLowerCase()
+
   const visibleBooks = books.filter((book) => {
     const matchesQuery =
       book.title.toLowerCase().includes(normalizedQuery) ||
@@ -19,6 +19,16 @@ export default function BookListPage() {
     const matchesAvailability = !onlyAvailable || book.available
     return matchesQuery && matchesAvailability
   })
+
+const updateParam = (key: string, value: string) => {
+    const next = new URLSearchParams(searchParams)  
+    if (value) {
+      next.set(key, value)
+    } else {
+      next.delete(key)                              
+    }
+    setSearchParams(next, { replace: true })
+  }
 
   const isEmpty = !loading && !error && books.length === 0
   const noMatches = books.length > 0 && visibleBooks.length === 0
@@ -28,9 +38,10 @@ export default function BookListPage() {
         <h1>Book Library</h1>
   <SearchBar
         query={query}
-        onQueryChange={value => setSearchParams(new URLSearchParams({ q: value }), { replace: true }) }
         onlyAvailable={onlyAvailable}
-        onOnlyAvailableChange={setOnlyAvailable}
+        onQueryChange={(value) => updateParam('q', value)}
+        onOnlyAvailableChange={(checked) =>  updateParam('onlyAvailable', checked ? 'true' : '') }
+
       />
 
       {loading && <p>Loading...</p>}
