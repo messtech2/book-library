@@ -7,11 +7,11 @@ export default function BookListPage() {
 
     const { books, loading, error, reload } = useBooks()
     const [searchParams, setSearchParams] = useSearchParams()
-    //const [onlyAvailable, setOnlyAvailable] = useState(false)
     const query = searchParams.get('q') ?? ''
     
     const onlyAvailable = searchParams.get('onlyAvailable') === 'true'
   const normalizedQuery = query.trim().toLowerCase()
+
   const visibleBooks = books.filter((book) => {
     const matchesQuery =
       book.title.toLowerCase().includes(normalizedQuery) ||
@@ -19,6 +19,16 @@ export default function BookListPage() {
     const matchesAvailability = !onlyAvailable || book.available
     return matchesQuery && matchesAvailability
   })
+
+const updateParam = (key: string, value: string) => {
+    const next = new URLSearchParams(searchParams)  
+    if (value) {
+      next.set(key, value)
+    } else {
+      next.delete(key)                              
+    }
+    setSearchParams(next, { replace: true })
+  }
 
   const isEmpty = !loading && !error && books.length === 0
   const noMatches = books.length > 0 && visibleBooks.length === 0
@@ -29,24 +39,9 @@ export default function BookListPage() {
   <SearchBar
         query={query}
         onlyAvailable={onlyAvailable}
-        onQueryChange={(value) => {
-  const next = new URLSearchParams(searchParams)  // copy, so onlyAvailable survives
-  if (value) {
-    next.set('q', value)
-  } else {
-    next.delete('q')                              // keep the URL clean when empty
-  }
-  setSearchParams(next, { replace: true })
-}}
-        onOnlyAvailableChange={(value) => {
-          const next = new URLSearchParams(searchParams)  // copy, so q survives
-          if (value) {
-            next.set('onlyAvailable', 'true')
-          } else {
-            next.delete('onlyAvailable')
-          }
-          setSearchParams(next, { replace: true })
-        }}
+        onQueryChange={(value) => updateParam('q', value)}
+        onOnlyAvailableChange={(checked) =>  updateParam('onlyAvailable', checked ? 'true' : '') }
+
       />
 
       {loading && <p>Loading...</p>}
