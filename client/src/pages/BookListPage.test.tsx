@@ -33,7 +33,7 @@ describe('BookListPage', () => {
       </MemoryRouter>
     )
 
-    expect(screen.getByText('Loading...')).toBeInTheDocument()
+    expect(screen.getByText('Loadingg...')).toBeInTheDocument()
   })
   it('error: shows the error message and a Retry button, and clicking it calls reload once', async () => {
     
