@@ -9,7 +9,7 @@ function App() {
   return (
     <section className="app">
     <header>
-      <Link to="/">Book Library</Link>
+     <h2 className="logo"><Link  to="/">Book Library</Link> </h2> 
     </header>
     <Routes>
       <Route path="/books/:id" element={<BookDetailPage  />} />
