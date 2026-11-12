@@ -16,7 +16,7 @@ export default function SearchBar({
 }: SearchBarProps) {
 
   return (
-    <div>
+    <div className="search-bar">
       <label htmlFor="book-search">Search</label>
       <input
         id="book-search"
