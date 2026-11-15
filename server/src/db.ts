@@ -6,7 +6,7 @@ const connectDb = async () => {
     if (!mongoUrl) {
       throw new Error('MONGO_URL is not defined');
     }
-// Connect to MongoDB using the provided URL
+
     await mongoose.connect(mongoUrl);
     console.log('Connected to MongoDB');
   } catch (error) {
