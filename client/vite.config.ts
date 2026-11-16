@@ -10,4 +10,10 @@ export default defineConfig({
     // Keep Vitest's default excludes (node_modules, dist, ...) and skip Playwright specs
     exclude: [...configDefaults.exclude, 'e2e/**'],
   },
+  server: {
+    proxy: {
+      '/api': 'http://server:4000',
+    },
+    
+  },
 })
