@@ -17,6 +17,7 @@ const userSchema = z.object({
 
 
 router.post("/auth/register", async (req: Request, res: Response) => {
+  
     try {
     const parsedBody = userSchema.safeParse(req.body);
     if (!parsedBody.success) {
@@ -33,14 +34,16 @@ router.post("/auth/register", async (req: Request, res: Response) => {
     const passwordHash = await bcrypt.hash(password, 10);
 
     const user = new User({ firstName, lastName, email, passwordHash });
-    const { passwordHash: _passwordHash, ...userWithOutPassword } = user.toObject();
     await user.save();
     res.status(201).json(user);
 
 } catch (error) {
-    console.error("Error registering user:", error);
-    res.status(500).json({ error: "Internal server error" });
+  if (typeof error === 'object' && error !== null && 'code' in error && error.code === 11000) {
+    return res.status(409).json({ error: 'User already exists' });
   }
+  console.error("Error registering user:", error);
+  res.status(500).json({ error: "Internal server error" });
+}
 });
 
 
