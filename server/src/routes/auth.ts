@@ -4,14 +4,13 @@ import { User } from "../models/user.js";
 import   z  from "zod";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { jwtSecret } from "../config.js";
+import { requireAuth } from "../middleware/requireAuth.js";
 
 
 const router = express.Router();
 
-const jwtSecret = process.env.JWT_SECRET;
-if (!jwtSecret) {
-throw new Error('JWT_SECRET is not defined');
-}
+
 const userSchema = z.object({
   firstName: z.string().min(2).max(100),
   lastName: z.string().min(2).max(100),
@@ -83,5 +82,25 @@ router.post("/auth/login", async (req: Request, res: Response) => {
   }
 
 });
+
+router.get("/auth/me", requireAuth, async (req: Request, res: Response) => {
+ 
+  try {
+    const user = await User.findById(res.locals.user.id);
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
+    }
+    res.status(200).json(user);
+ } catch (error) {
+  console.error("Error loading current user:", error);
+  res.status(500).json({ error: "Internal server error" });
+}
+});
+router.post("/auth/logout", (req: Request, res: Response) => {
+  res.clearCookie('token', { httpOnly: true, sameSite: 'lax', secure: process.env.NODE_ENV === 'production' });
+  res.status(204).json({ message: "Logged out successfully" });
+
+});
+
 
 export const authRoutes = router;
