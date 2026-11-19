@@ -66,6 +66,7 @@ jobs:
           - 27017:27017
     env:
       MONGO_URL_TEST: mongodb://localhost:27017/library_test
+      JWT_SECRET: ci-test-secret
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

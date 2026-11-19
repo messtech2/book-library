@@ -11,6 +11,7 @@ services:
       PORT: 4000
       MONGO_URL: ${MONGO_URL}
       MONGO_URL_TEST: ${MONGO_URL_TEST}
+      JWT_SECRET: ${JWT_SECRET}
     volumes:
       - ./server:/app
       - /app/node_modules
