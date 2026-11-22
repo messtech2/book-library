@@ -5,4 +5,4 @@ node_modules/
 dist/
 *.log
 .dockerignore
-cookies.txt
+cookies*.txt
