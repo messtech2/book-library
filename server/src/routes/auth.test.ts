@@ -35,9 +35,15 @@ await mongoose.disconnect();
 });
 describe('POST /api/auth/register', () => {
 
+  /**
+   * 
+   * Arrange: use your validUser fixture and add role: 'admin' to the body you send.
+Act: POST it to the register route, as in your other register tests.
+Assert: expect a 201, and expect res.body.role to be 'member'.
+   */
 
   it('should return 201 and the body has email,role: member and id', async () => {
-    const res = await request(app).post('/api/auth/register').send(validUser);
+        const res = await request(app).post('/api/auth/register').send(validUser);
 
     expect(res.body).toHaveProperty('email');
     expect(res.body).toHaveProperty('role');
@@ -46,8 +52,13 @@ describe('POST /api/auth/register', () => {
     expect(res.body).not.toHaveProperty('_id');
     expect(res.status).toBe(201);
   });
-  
-  
+
+  it('ignores a role sent in the request body', async () => {
+    const res = await request(app).post('/api/auth/register').send({ ...validUser, role: 'admin' });
+    expect(res.status).toBe(201);
+    expect(res.body.role).toBe('member');
+  });
+
   it('The response never contains passwordHash or password', async () => {
     const res = await request(app).post('/api/auth/register').send(validUser);
     expect(res.body).not.toHaveProperty('passwordHash');
