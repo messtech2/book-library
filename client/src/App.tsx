@@ -5,8 +5,8 @@ import BookListPage from './pages/BookListPage'
 import LoginPage from './pages/LoginPage'
 import { useMe } from './hooks/useMe'
 import { useLogout } from './hooks/useLogout'
+import RegisterPage from './pages/RegisterPage'
 
-//A user shows their first name and a Sign out button
 function App() {
   const { user, loading } = useMe()
   const  logout  = useLogout()
@@ -20,7 +20,7 @@ function App() {
   {!loading && !user && <Link to="/login">Sign in</Link>}
   {user && (
     <>
-      <span>Welcome,{user.firstName}  </span>
+      <span>Welcome, {user.firstName}  </span>
       <button type="button" onClick={() => logout.mutate()} disabled={logout.isPending}>
         Sign out
       </button>
@@ -32,6 +32,7 @@ function App() {
       <Route path="/books/:id" element={<BookDetailPage  />} />
       <Route path="/" element={<BookListPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
       <Route path="*" element={<p>Page not found. <Link to="/">Go home</Link></p>} />
     </Routes>
 

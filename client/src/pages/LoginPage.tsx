@@ -1,7 +1,7 @@
 import React from 'react'
 import { useLogin } from '../hooks/useLogin';
 import { useMe } from '../hooks/useMe';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useEffect} from 'react';
 
 
@@ -40,7 +40,7 @@ export default function LoginPage() {
         
         <form onSubmit={onSubmit} className="form-field">
           <div className="form-group">
-            <label htmlFor="email" className="">Email</label>
+            <label htmlFor="email">Email</label>
             <input type="email" name="email" id="email" required className="email-input" />
           </div>
           <div className="form-group">
@@ -50,6 +50,7 @@ export default function LoginPage() {
           <button type="submit" disabled={isPending} className="login-button">
             {isPending ? 'Logging in...' : 'Login'}
           </button>
+          <p className="form-info">Don't have an account? <Link to="/register">Register</Link></p>
         </form>
         {loginMutation.isError && (
           <p className="form-error">{(loginMutation.error as Error).message}</p>
