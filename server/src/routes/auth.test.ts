@@ -35,12 +35,7 @@ await mongoose.disconnect();
 });
 describe('POST /api/auth/register', () => {
 
-  /**
-   * 
-   * Arrange: use your validUser fixture and add role: 'admin' to the body you send.
-Act: POST it to the register route, as in your other register tests.
-Assert: expect a 201, and expect res.body.role to be 'member'.
-   */
+ 
 
   it('should return 201 and the body has email,role: member and id', async () => {
         const res = await request(app).post('/api/auth/register').send(validUser);

@@ -2,9 +2,41 @@ import express  from "express";
 import mongoose from "mongoose";
 import type { Request, Response } from "express";
 import { Book } from "../models/book.js";
+import { requireRole } from "../middleware/requireRole.js";
+import { requireAuth } from "../middleware/requireAuth.js";
+import { z } from "zod";
 
+
+
+const bookSchema = z.object({
+  title: z.string().min(1),
+  author: z.string().min(1),
+  genre: z.string().optional(),
+  publishedYear: z.number().int(),
+  isbn: z.string().optional(),
+  available: z.boolean(),
+});
 
 const router = express.Router();
+
+
+router.post('/books', requireAuth, requireRole('librarian', 'admin'), async (req: Request, res: Response) => {
+  const parsedBody = bookSchema.safeParse(req.body);
+
+  if (!parsedBody.success) {
+    return res.status(400).json({ error: 'Invalid book data', issues: parsedBody.error.issues });
+  }
+
+  try {
+    const book = new Book(parsedBody.data);
+    await book.save();
+    res.status(201).json(book);
+  } catch (error) {
+    console.error('Error creating book:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 //Get all books
 router.get("/books", async (_req: Request, res: Response) => {

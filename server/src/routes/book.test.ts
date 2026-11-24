@@ -3,7 +3,46 @@ import {describe, it, expect, beforeAll, beforeEach, afterAll } from 'vitest';
 import app from '../app.js';
 import { Book } from '../models/book.js';
 import request from 'supertest';
+import { User } from '../models/user.js';
 
+
+const validUser = {
+  firstName: 'Test',
+  lastName: 'User',
+  email: 'test@example.com',
+  password: 'password123',
+  
+};
+
+
+const loginAs = async (role: 'member' | 'librarian' | 'admin') => {
+  const agent = request.agent(app);
+
+  const registerResponse = await agent.post('/api/auth/register').send(validUser);
+  if (registerResponse.status !== 201) {
+    throw new Error(`register failed with ${registerResponse.status}`);
+  }
+
+  await User.updateOne({ email: validUser.email }, { role });
+
+  const loginResponse = await agent.post('/api/auth/login').send({
+    email: validUser.email,
+    password: validUser.password,
+  });
+  if (loginResponse.status !== 200) {
+    throw new Error(`login failed with ${loginResponse.status}`);
+  }
+
+  return agent;
+};
+const newBook = {
+      title: 'Book of  The Year',
+      author: 'The Author',
+      publishedYear: 2022,
+      isbn: '1234567890',
+      available: true,
+
+}
 
 describe('books API', () => {
     beforeAll(async () => {
@@ -17,6 +56,7 @@ describe('books API', () => {
 
 beforeEach(async () => {
   await Book.deleteMany({});
+  await User.deleteMany({})
   await Book.insertMany([
     {
       title: 'Book One',
@@ -70,6 +110,31 @@ afterAll(async () => {
         expect(res.status).toBe(404);
     });
     
+    it('no cookies is generated', async ()=>{
+          const res = await request(app).post('/api/books').send(newBook);
+          expect(res.status).toBe(401);
+
+
+    })
+    it('Returns 403 for a member', async ()=>{
+          const agent = await loginAs('member');
+          const res = await agent.post('/api/books').send(newBook);
+          expect(res.status).toBe(403);
+
+
+    })
+    it('if role is librarian throw 201', async ()=>{
+      
+        const agent = await loginAs('librarian');
+          const res = await agent.post('/api/books').send(newBook);
+
+            expect(res.body.title).toBe('Book of  The Year');
+            expect(res.status).toBe(201);
+
+
+    })
+
+  
     
    
 });
