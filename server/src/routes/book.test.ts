@@ -4,6 +4,7 @@ import app from '../app.js';
 import { Book } from '../models/book.js';
 import request from 'supertest';
 import { User } from '../models/user.js';
+import { requireRole } from '../middleware/requireRole.js';
 
 
 const validUser = {
@@ -43,6 +44,7 @@ const newBook = {
       available: true,
 
 }
+
 
 describe('books API', () => {
     beforeAll(async () => {
@@ -133,9 +135,62 @@ afterAll(async () => {
 
 
     })
+    describe('PUT /api/books/:id', () => {
+  const updatedBook = { ...newBook, title: 'End of Year 2026' };
 
+  const getBookId = async () => {
+    const book = await Book.findOne({ title: 'Book One' });
+    if (!book) throw new Error('Book not found');
+    return book.id;
+  };
+
+  it('returns 401 without a cookie', async () => {
+    const id = await getBookId();
+    const res = await request(app).put(`/api/books/${id}`).send(updatedBook);
+    expect(res.status).toBe(401);
+  });
+
+  it('returns 403 for a member', async () => {
+    const id = await getBookId();
+    const agent = await loginAs('member');
+    const res = await agent.put(`/api/books/${id}`).send(updatedBook);
+    expect(res.status).toBe(403);
+  });
+
+  it('updates the book for a librarian', async () => {
+    const id = await getBookId();
+    const agent = await loginAs('librarian');
+    const res = await agent.put(`/api/books/${id}`).send(updatedBook);
+    expect(res.status).toBe(200);
+    expect(res.body.title).toBe('End of Year 2026');
+    const saved = await Book.findById(id);
+    expect(saved?.title).toBe('End of Year 2026');
+  });
+
+  it('returns 404 for an unknown id', async () => {
+    const agent = await loginAs('librarian');
+    const res = await agent.put('/api/books/000000000000000000000000').send(updatedBook);
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 400 for an invalid id', async () => {
+    const agent = await loginAs('librarian');
+    const res = await agent.put('/api/books/invalid-id').send(updatedBook);
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 400 for an invalid body', async () => {
+    const id = await getBookId();
+    const agent = await loginAs('librarian');
+    const res = await agent.put(`/api/books/${id}`).send({ ...updatedBook, title: '' });
+    expect(res.status).toBe(400);
+  });
+});
+
+  
+});
   
     
    
-});
+
 

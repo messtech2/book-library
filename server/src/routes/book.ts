@@ -72,4 +72,41 @@ router.get("/books/:id", async (req: Request, res: Response) => {
   }
 });
 
+
+router.put("/books/:id", requireAuth, requireRole('librarian','admin') , async (req: Request, res: Response) => {
+  
+    const { id } = req.params;
+    if(!mongoose.isValidObjectId(id)){
+      return res.status(400).json({error: 'Invalid book ID'})
+    }
+
+    const parsedBody = bookSchema.safeParse(req.body);
+
+      if (!parsedBody.success) {
+    return res.status(400).json({ error: 'Invalid book data', issues: parsedBody.error.issues });
+  }
+
+    try {
+
+       const book = await Book.findByIdAndUpdate(id, parsedBody.data,{
+      returnDocument: 'after',           
+      runValidators: true  
+  }) 
+   
+
+  if (!book) {
+    return res.status(404).json({ error: "Book not found" });
+  }
+  
+  res.status(200).json(book);
+
+} catch (error) {
+    console.error('Error updating book:', error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+
 export const routes = router;
