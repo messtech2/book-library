@@ -105,6 +105,28 @@ router.put("/books/:id", requireAuth, requireRole('librarian','admin') , async (
     res.status(500).json({ error: "Internal server error" });
   }
 });
+router.delete("/books/:id", requireAuth, requireRole('admin') , async (req: Request, res: Response) => {
+  
+    const { id } = req.params;
+    if(!mongoose.isValidObjectId(id)){
+      return res.status(400).json({error: 'Invalid book ID'})
+    }
+
+    try {
+
+       const book = await Book.findByIdAndDelete(id)
+
+  if (!book) {
+    return res.status(404).json({ error: "Book not found" });
+  }
+  
+  res.status(204).send();
+
+} catch (error) {
+    console.error('Error deleting book:', error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 

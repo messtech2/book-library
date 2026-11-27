@@ -5,6 +5,7 @@ import { Book } from '../models/book.js';
 import request from 'supertest';
 import { User } from '../models/user.js';
 import { requireRole } from '../middleware/requireRole.js';
+import type { id } from 'zod/locales';
 
 
 const validUser = {
@@ -44,7 +45,6 @@ const newBook = {
       available: true,
 
 }
-
 
 describe('books API', () => {
     beforeAll(async () => {
@@ -187,8 +187,69 @@ afterAll(async () => {
   });
 });
 
+    describe('DELETE /api/books/:id', ()=>{
+
+
+      const getBookId = async () => {
+    const book = await Book.findOne( { title: 'Book One'});
+    if (!book) throw new Error('Book not found');
+    return book.id;
+  };
+      it('returns 401 without a cookie', async () => {
+    const id = await getBookId();
+    const res = await request(app).delete(`/api/books/${id}`);
+    expect(res.status).toBe(401);
+  });
+
+    it('returns 403 for a member', async () => {
+    const id = await getBookId();
+    const agent = await loginAs('member');
+    const res = await agent.delete(`/api/books/${id}`);
+    expect(res.status).toBe(403);
+  });
+
+      it('returns 403 for a librarian', async () => {
+    const id = await getBookId();
+    const agent = await loginAs('librarian');
+    const res = await agent.delete(`/api/books/${id}`);
+    expect(res.status).toBe(403);
+  });
+  it('deletes the book for an admin', async()=>{
+     const id = await getBookId();
+    const agent = await loginAs('admin');
+    const res = await agent.delete(`/api/books/${id}`);
+    expect(res.status).toBe(204);
+    const saved = await Book.findById(id);
+    expect(saved).toBeNull();
+  });
+   it('returns 404 for an unknown id', async () => {
+    const agent = await loginAs('admin');
+    const res = await agent.delete('/api/books/000000000000000000000000');
+    expect(res.status).toBe(404);
+  });
+  it('returns 400 for an invalid id', async () => {
+    const agent = await loginAs('admin');
+    const res = await agent.delete('/api/books/invalid-id');
+    expect(res.status).toBe(400);
+  });
+  it('Keeps the other book after the delete', async () => {
+    const id = await getBookId();
+    const agent = await loginAs('admin');
+    await agent.delete(`/api/books/${id}`);
+    const otherBook = await Book.findOne( { title: 'Book Two'})
+    expect(otherBook).not.toBeNull();
+    expect(await Book.countDocuments()).toBe(1)
+  });
+
+
+  })
+
+
+
+    });
+
   
-});
+
   
     
    
